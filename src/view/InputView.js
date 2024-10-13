@@ -7,6 +7,6 @@ export default class InputView {
   }
 
   static async inputRestartNumber() {
-    return await Console.readLineAsync(message.RESTART_MESSAGE + '\n');
+    return await Console.readLineAsync('');
   }
 }

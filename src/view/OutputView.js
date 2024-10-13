@@ -7,9 +7,19 @@ export default class OutputView {
   }
 
   static printResultMessage(strike, ball) {
-    Console.print(
-      `${ball ? `${ball}볼` : ''} ${strike ? `${strike}스트라이크` : ''}`,
-    );
+    if (!strike && !ball) {
+      Console.print('낫싱');
+      return;
+    }
+    if (!strike) {
+      Console.print(`${ball}볼`);
+      return;
+    }
+    if (!ball) {
+      Console.print(`${strike}스트라이크`);
+      return;
+    }
+    Console.print(`${ball}볼 ${strike}스트라이크`);
   }
 
   static printCollectMessage() {
