@@ -1,27 +1,21 @@
-import User from '../model/User.js';
-import UserService from '../service/UserService.js';
+import BaseballGameModel from '../model/BaseballGameModel.js';
 import { checkInputNumbers, checkReplyNumber } from '../validate.js';
 import InputView from '../view/InputView.js';
 import OutputView from '../view/OutputView.js';
 
 export default class GameController {
-  #you;
+  #baseballGameModel;
   constructor() {
-    this.#you = new User(3);
+    this.#baseballGameModel = new BaseballGameModel(3);
   }
 
   // 전체적인 게임 흐름을 담당
   async playGame() {
-    let keepGoing = true;
     OutputView.printStartMessage();
-    while (keepGoing) {
+    while (!this.#baseballGameModel.isOver) {
       const numbers = await InputView.inputNumbers(); // 사용자에게 입력받기
       checkInputNumbers(numbers); // 유효성 검사
-      const { strike, ball } = UserService.getStrikeBallCount(
-        numbers,
-        this.#you.getNumber,
-      );
-      console.log(strike, ball);
+      const { strike, ball } = this.#baseballGameModel.compareNumbers(numbers);
       OutputView.printResultMessage(strike, ball);
       if (strike === 3) {
         OutputView.printCollectMessage();
@@ -29,9 +23,9 @@ export default class GameController {
         const restartNumber = await InputView.inputRestartNumber();
         checkReplyNumber(restartNumber);
         if (restartNumber === '2') {
-          keepGoing = false;
+          this.#baseballGameModel.over();
         } else {
-          this.#you.setNumber();
+          this.#baseballGameModel.restart();
         }
       }
     }
