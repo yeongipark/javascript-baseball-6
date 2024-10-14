@@ -1,33 +1,40 @@
-import BaseballGameModel from '../model/BaseballGameModel.js';
+import GameService from '../service/GameService.js';
 import { checkInputNumbers, checkReplyNumber } from '../validate.js';
 import InputView from '../view/InputView.js';
 import OutputView from '../view/OutputView.js';
 
 export default class GameController {
-  #baseballGameModel;
+  #gameService;
   constructor() {
-    this.#baseballGameModel = new BaseballGameModel(3);
+    this.#gameService = new GameService();
   }
 
-  // 전체적인 게임 흐름을 담당
+  // 전체적인 게임 흐름을 담당하는 메서드
   async playGame() {
     OutputView.printStartMessage();
-    while (!this.#baseballGameModel.isOver) {
-      const numbers = await InputView.inputNumbers(); // 사용자에게 입력받기
-      checkInputNumbers(numbers); // 유효성 검사
-      const { strike, ball } = this.#baseballGameModel.compareNumbers(numbers);
+    while (!this.#gameService.isOver()) {
+      const numbers = await InputView.inputNumbers();
+      checkInputNumbers(numbers);
+      const { strike, ball } = this.#gameService.compareNumbers(numbers);
       OutputView.printResultMessage(strike, ball);
-      if (strike === 3) {
-        OutputView.printCollectMessage();
-        OutputView.printRestartMessage();
-        const restartNumber = await InputView.inputRestartNumber();
-        checkReplyNumber(restartNumber);
-        if (restartNumber === '2') {
-          this.#baseballGameModel.over();
-        } else {
-          this.#baseballGameModel.restart();
-        }
-      }
+      await this.#checkGameResult(strike);
     }
+  }
+
+  // 3스트라이크인지 확인하는 메서드
+  async #checkGameResult(strike) {
+    if (strike === 3) {
+      const restartNumber = await this.#askForRestart();
+      checkReplyNumber(restartNumber);
+      this.#gameService.restart(restartNumber);
+    }
+  }
+
+  // 3스트라이크 인 경우 게임 재시작 할 지 입력받는 메서드
+  async #askForRestart() {
+    OutputView.printCollectMessage();
+    OutputView.printRestartMessage();
+    const restartNumber = await InputView.inputRestartNumber();
+    return restartNumber;
   }
 }

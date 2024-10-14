@@ -5,6 +5,7 @@ export function checkInputNumbers(number) {
   isNumber(number);
   isLength3(number);
   isDuplicated(number);
+  isContainZero(number);
 }
 
 // @param number : string
@@ -25,6 +26,12 @@ function isLength3(number) {
 function isDuplicated(number) {
   if (new Set(number).size !== 3) {
     throw new Error(errorMessage.DUPLICATE);
+  }
+}
+
+function isContainZero(number) {
+  if (number.includes('0')) {
+    throw new Error(errorMessage.NO_CONTAINZERO);
   }
 }
 

@@ -15,48 +15,17 @@ export default class BaseballGameModel {
     return this.#isOver;
   }
 
+  get computerNumbers() {
+    return this.#computerNumbers;
+  }
+
   restart() {
     this.#computerNumbers = this.#getRandomNumbers();
+    this.#isOver = false;
   }
 
-  over() {
+  gameOver() {
     this.#isOver = true;
-  }
-
-  compareNumbers(numbers) {
-    let strike = 0;
-    let ball = 0;
-    [...this.#computerNumbers].forEach((computerNumber, computerIndex) => {
-      [...numbers].forEach((number, index) => {
-        [strike, ball] = this.#checkStrikeOrBall({
-          computerNumber,
-          computerIndex,
-          number,
-          index,
-          strike,
-          ball,
-        });
-      });
-    });
-
-    return { strike, ball };
-  }
-
-  #checkStrikeOrBall({
-    computerNumber,
-    computerIndex,
-    number,
-    index,
-    strike,
-    ball,
-  }) {
-    if (computerNumber === number && computerIndex === index) {
-      return [strike + 1, ball];
-    } else if (computerNumber === number) {
-      return [strike, ball + 1];
-    } else {
-      return [strike, ball];
-    }
   }
 
   #getRandomNumbers() {
